@@ -36,51 +36,44 @@ public class ContactService {
     }
 
     public Page<Contact> findAllContact(Pageable pageable){
-        //return contactRepository.findAll(pageable);
-        
-
         return contactRepository.findByStatus(Stts.Active, pageable);
     }
 
-    public Contact addContact(Long companyId, Contact contact) {
-        return companyRepository.findById(companyId).map(company -> {
+    public Contact addContact(Contact contact) {
+        PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+        PhoneNumber phoneNumber = null;
             
-            PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
-            PhoneNumber phoneNumber = null;
-            
-            try {
-                phoneNumber = phoneUtil.parse(contact.getPhoneNumber(),"HU");
+        try {
+            phoneNumber = phoneUtil.parse(contact.getPhoneNumber(),"HU");
                 
-            } catch (NumberParseException e) {
-                e.printStackTrace();
-            }
-            
-            
-            if(!emailCheck(contact.getEmail())){
-                return null;
-            }
-
-            if(phoneUtil.isValidNumber(phoneNumber)){
-            contact.setPhoneNumber(phoneUtil.format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.E164));
-            
-            contact.setCompany(company);
-            return contactRepository.save(contact);
-            }
-            else{return null;}
-        }).orElseThrow(() -> new ResourceNotFoundException("companyId " + companyId + " not found"));
-    }
-    
-    public Contact updateContact(Long companyId, Long contactId, Contact contactRequest){
-        if(!companyRepository.existsById(companyId)) {
-            throw new ResourceNotFoundException("CompanyId " + companyId + " not found");
+        } catch (NumberParseException e) {
+            e.printStackTrace();
+        }
+        
+        if(!emailCheck(contact.getEmail())){
+            return null;
         }
 
-        return contactRepository.findById(contactId).map(contact -> {
+        if(phoneUtil.isValidNumber(phoneNumber)){
+        contact.setPhoneNumber(phoneUtil.format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.E164));
+            
+        //contact.setCompany(company);
+        return contactRepository.save(contact);
+        }
+        else{return null;}
+        
+    }
+    
+    public Contact updateContact(Long contactId, Contact contactRequest){
+        if(!companyRepository.existsById(contactRequest.getCompany().getId())) {
+            throw new ResourceNotFoundException("CompanyId " + contactRequest.getCompany().getId() + " not found");
+        }
+
+        return contactRepository.findById(contactRequest.getId()).map(contact -> {
             if(!emailCheck(contactRequest.getEmail())){
                 return null;
             }
-            contactRequest.setCompany(companyRepository.findById(companyId).get());
-            contactRequest.setId(contact.getId());
+            contactRequest.setId(contactId);
             contactRequest.setCreateDate(contact.getCreateDate());
             return contactRepository.save(contactRequest);
         }).orElseThrow(() -> new ResourceNotFoundException("ContactId " + contactId + "not found"));

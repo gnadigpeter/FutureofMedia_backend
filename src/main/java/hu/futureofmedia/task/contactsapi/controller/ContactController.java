@@ -40,18 +40,16 @@ public class ContactController {
         return new ResponseEntity<>(contacts, HttpStatus.OK);
     }
 
-    @PostMapping("/add/companyId/{companyId}")
-    public ResponseEntity<Contact> addContact(@PathVariable (value = "companyId") Long companyId,
+    @PostMapping("/add")
+    public ResponseEntity<Contact> addContact(
                                  @Valid @RequestBody Contact contact) {
-        Contact newContact = contactService.addContact(companyId, contact);
+        Contact newContact = contactService.addContact(contact);
         return new ResponseEntity<>(newContact, HttpStatus.CREATED);
     }
 
-    @PutMapping("/update/companyId/{companyId}/contactId/{contactId}")
-    public ResponseEntity<Contact> updateContact(@PathVariable (value = "companyId") Long companyId,
-                                 @PathVariable (value = "contactId") Long contactId,
-                                 @Valid @RequestBody Contact contactRequest) {
-        Contact updateContact = contactService.updateContact(companyId, contactId, contactRequest);
+    @PutMapping("/update/{contactId}")
+    public ResponseEntity<Contact> updateContact(@PathVariable (value = "contactId") Long contactId,  @Valid @RequestBody Contact contactRequest) {
+        Contact updateContact = contactService.updateContact(contactId, contactRequest);
         return new ResponseEntity<>(updateContact, HttpStatus.OK);
     }
 

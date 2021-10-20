@@ -15,14 +15,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.UpdateTimestamp;
-
 
 @Entity
 public class Contact implements Serializable {
@@ -34,10 +28,8 @@ public class Contact implements Serializable {
     private String firstName;
     private String email; 
     private String phoneNumber;
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "company_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnore
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "company_id")
     private Company company;
     private String note;
     @Enumerated(EnumType.ORDINAL)
@@ -64,6 +56,15 @@ public class Contact implements Serializable {
         this.company = company;
     }
 
+    public Company getCompany() {
+        return company;
+    }
+
+
+    public void setCompany(Company company) {
+        this.company = company;
+    }
+
 
     public Date getCreateDate() {
         return createDate;
@@ -80,79 +81,53 @@ public class Contact implements Serializable {
         return modifyDate;
     }
 
-
-
-
     public void setModifyDate(Date modifyDate) {
         this.modifyDate = modifyDate;
     }
-
-
-
 
     public Long getId() {
         return id;
     }
 
-
     public void setId(Long id) {
         this.id = id;
     }
-
 
     public String getLastName() {
         return lastName;
     }
 
-
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
-
 
     public String getFirstName() {
         return firstName;
     }
 
-
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
-
 
     public String getEmail() {
         return email;
     }
 
-
     public void setEmail(String email) {
         this.email = email;
     }
-
 
     public String getPhoneNumber() {
         return phoneNumber;
     }
 
-
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
-    public Company getCompany() {
-        return company;
-    }
-
-
-    public void setCompany(Company company) {
-        this.company = company;
-    }
-
-
     public String getNote() {
         return note;
     }
-
 
     public void setNote(String note) {
         this.note = note;
@@ -162,11 +137,9 @@ public class Contact implements Serializable {
         return status;
     }
 
-
     public void setStatus(Stts status) {
         this.status = status;
     }
-
 
     @Override
     public String toString() {
@@ -174,8 +147,4 @@ public class Contact implements Serializable {
                 + firstName + ", id=" + id + ", lastName=" + lastName + ", modifyDate=" + modifyDate + ", note=" + note
                 + ", phoneNumber=" + phoneNumber + ", status=" + status + "]";
     }
-
-
- 
-    
 }
